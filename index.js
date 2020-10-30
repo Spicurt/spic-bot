@@ -1,51 +1,56 @@
-const discord = require("discord.js")
-const client = new discord.Client()
+const Discord = require('discord.js');
 
-const config = require("./config.json")
-const privateMessage = require('./private-message')
-const command = require("./commands")
-var version = "0.6.2 - Alpha"
-   
-client.on('ready', () =>{
-    console.log("This bot is currently online")
-    privateMessage(client, 's!help', "This feature isn't available during the alpha stage.")
+const client = new Discord.Client();
 
-    //commands
-    command(client, "botInfo", (message) => {
-        const InfoEmbed = new discord.MessageEmbed()
-        .setTitle("SpicurtBot")
-        .setAuthor("made by Spicurt")
-        .setColor("#00825f")
-        .setDescription("Version " + version)
-        .setURL("https://www.youtube.com/channel/UCRSH3MXMWvpdByjfRFLbC3g")
-        message.channel.send(InfoEmbed)
-    })
+const { readdirSync } = require('fs');
 
-    command(client, 'servermembers', (message) => {
-       client.guilds.cache.forEach((guild) =>{
-           message.channel.send(`${guild.name} has a total of ${guild.memberCount} members.`)
-       })
-    })
+const { join } = require('path');
 
-   
-  
-})
+client.commands= new Discord.Collection();
 
-client.on('message', msg=>{
-    let args = msg.content.substring(config.prefix.length).split(" ")
+const prefix = 's!';
+//You can change the prefix if you like. It doesn't have to be !
 
-    switch(args[0]){
-        case 'clear':
-        if(!args[1]) return msg.channel.send("ERROR: Define a number")
-        msg.channel.bulkDelete(args[1])
-        msg.channel.send("Deleted "+args[1]+" messages.")
-        
-        
-    break;
+
+const commandFiles = readdirSync(join(__dirname, "commands")).filter(file => file.endsWith(".js"));
+
+for (const file of commandFiles) {
+    const command = require(join(__dirname, "commands", `${file}`));
+    client.commands.set(command.name, command);
+}
+
+
+client.on("error", console.error);
+
+client.on('ready', () => {
+    console.log('I am ready');
+    client.user.setStatus(`online`)
+    client.user.setActivity('Prefix: s!',{type: "STREAMING"})
+});
+
+
+
+client.on("message", async message => {
+
+    if(message.author.bot) return;
+    if(message.channel.type === 'dm') return;
+
+    if(message.content.startsWith(prefix)) {
+        const args = message.content.slice(prefix.length).trim().split(" ");
+
+        const command = args.shift().toLowerCase();
+
+        if(!client.commands.has(command)) return;
+
+
+        try {
+            client.commands.get(command).run(client, message, args);
+
+        } catch (error){
+            console.error(error);
+        }
     }
-    
 })
-
-
-client.login(config.token)
-
+ 
+client.login('NzcxMDU0OTE0NDk1NDQ3MDYx.X5mi2Q.X88w1qtXmA7Eo18sLmnoN81nNhU')
+ 
