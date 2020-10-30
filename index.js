@@ -9,8 +9,15 @@ var version = "0.6.2 - Alpha"
 client.on('ready', () =>{
     console.log("This bot is currently online")
     privateMessage(client, 's!help', "This feature isn't available during the alpha stage.")
-
+    let args = message.content.substring(PREFIX.length).split(" ")
     //commands
+    switch(args[0]){
+        case 's!clear':
+            if(!args[1]) return message.channel.send("ERROR: Please define a number")
+            message.channel.bulkDelete(args[1])
+            message.channel.send("Deleted "+ args[1]+ " messages." )
+        break;
+    }
     command(client, "botInfo", (message) => {
         const InfoEmbed = new discord.MessageEmbed()
         .setTitle("SpicurtBot")
@@ -25,15 +32,6 @@ client.on('ready', () =>{
        client.guilds.cache.forEach((guild) =>{
            message.channel.send(`${guild.name} has a total of ${guild.memberCount} members.`)
        })
-    })
-    command(client, 'clear', (message) => {
-        if (message.member.hasPermission("ADMINISTRATOR")){
-            message.channel.messages.fetch().then((result) =>{
-                message.channel.bulkDelete(20)
-                message.channel.send('Cleared 20 messages.')
-            })
-        }
-        
     })
    
   
