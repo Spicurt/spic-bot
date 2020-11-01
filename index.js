@@ -69,16 +69,16 @@ client.on('message', message =>{
   function play(connection, message){
     var server = servers[message.guild.id]
 
-    server.dispatcher = connection.play(ytdl(server.queue[0],{filter: 'audioonly'}))
+    server.dispatcher = connection.play(ytdl(server.queue[0],{filter: 'audioonly'}));
 
-    server.queue.shift()
+    server.queue.shift();
 
     server.dispatcher.on("end",function(){
       if(server.queue[0]){
-        play(connection, message)
+        play(connection, message);
       }
       else{
-        connection.disconnect()
+        connection.disconnect();
       }
     })
   }
@@ -87,7 +87,7 @@ client.on('message', message =>{
     case 'play':
       if(!args[1]) return message.channel.send("You need to provide a link/name!");
 
-      if(!message.member.voice.channel) return message.channel.send("You need to be in a voice channel first!")
+      if(!message.member.voice.channel) return message.channel.send("You need to be in a voice channel first!");
 
       if(!servers[message.guild.id]) servers[message.guild.id] = {
         queue : []
@@ -95,10 +95,10 @@ client.on('message', message =>{
 
       var server = servers[message.guild.id]
 
-      server.queue.push(args[1])
+      server.queue.push(args[1]);
 
       if(!message.guild.voice.connection) message.member.voice.channel.join().then(function(connection){
-        play(connection, message)
+        play(connection, message);
       })
 
     break;
@@ -109,5 +109,5 @@ client.on('message', message =>{
 })
 
 
-client.token = (config.token);
+client.login = (config.token);
  
