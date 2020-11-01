@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const Discord = require('discord.js');
 
 module.exports = {
-    name: "covid19",
+    name: "covid",
     description: "Track a country or worldwide COVID-19 cases",
 
     async run (client, message, args){
@@ -13,9 +13,9 @@ module.exports = {
         //Credit to Sarastro#7725 for the command :)
 
         const noArgs = new Discord.MessageEmbed()
-        .setTitle('Missing arguments')
+        .setTitle('Missing value')
         .setColor(0xFF0000)
-        .setDescription('You are missing some args (ex: ;covid all || ;covid Canada)')
+        .setDescription('You are missing some values (ex: s!covid all || s!covid Canada)')
         .setTimestamp()
 
         if(!args[0]) return message.channel.send(noArgs);
